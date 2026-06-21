@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Clean Loading Screen</title>
+<style>
+:root {
+    --bg: #050505;
+    --accent: rgb(57, 13, 253);
+    --accent-glow: rgb(0, 255, 247);
+    --track: rgba(255, 255, 255, 0.217);
+    --text-muted: #fdfdfdb6;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    background-color: var(--bg);
+    font-family: system-ui, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 280px;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spinner {
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+
+.ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid transparent; 
+}
+
+.ring-outer {
+    border-top: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    animation: spin 1.8s linear infinite;
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.ring-inner {
+    inset: 8px;
+    border-bottom: 1px solid var(--text-muted);
+    border-left: 1px solid var(--text-muted);
+    opacity: 0.4;
+    animation: spin-reverse 1.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.core {
+    position: absolute;
+    inset: 28px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-glow);
+    animation: pulse 2s ease-in-out infinite alternate;
+}
+
+.status-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.status-text-group {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.label { 
+    color: var(--text-muted); 
+}
+
+.percent { 
+    color: var(--accent); 
+    text-shadow: 0 0 8px var(--accent-glow); 
+}
+
+.progress-track {
+    width: 100%;
+    height: 1px; 
+    background: var(--track);
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transition: width 0.2s ease-out;
+}
+
+@keyframes spin { 
+    100% { 
+        transform: rotate(360deg); 
+    } 
+}
+
+@keyframes spin-reverse { 
+    100% { 
+        transform: rotate(-360deg); 
+    } 
+}
+
+@keyframes pulse { 
+    0% { 
+        transform: scale(0.9); 
+        opacity: 0.7; 
+    } 
+
+    100% { 
+        transform: scale(1.3); 
+        opacity: 1; 
+    } 
+}
+
+.fade-out { 
+    opacity: 0; 
+    pointer-events: none; 
+}
+
+</style>
+</head>
+<body>
+
+<div id="loader-container">
+<div class="spinner">
+<div class="ring ring-outer"></div>
+<div class="ring ring-inner"></div>
+<div class="core"></div>
+</div>
+        
+<div class="status-wrapper">
+<div class="status-text-group">
+<span class="label">Loading...</span>
+<span class="percent" id="percent">0%</span>
+</div>
+
+<div class="progress-track">
+<div class="progress-fill" id="bar"></div>
+</div>
+</div>
+</div>
+
+<script>
+const bar = document.getElementById('bar');
+const percent = document.getElementById('percent');
+const container = document.getElementById('loader-container');
+let progress = 0;
+
+const runLoader = () => {
+progress += Math.random() * 2 + 0.1; 
+
+if (progress >= 100) {
+    progress = 100;
+    bar.style.width = '100%';
+    percent.textContent = '100%';
+    setTimeout(() => {
+        container.classList.add('fade-out');
+        }, 700); 
+    return;
+}
+
+bar.style.width = progress + '%';
+percent.textContent = Math.floor(progress) + '%';
+setTimeout(runLoader, Math.random() * 250 + 150);
+};
+
+requestAnimationFrame(() => setTimeout(runLoader, 300));
+
+</script>
+</body>
+</html>
